@@ -3,10 +3,10 @@ from django import forms
 SEX_CHOICES = [('male', 'Male'), ('female', 'Female')]
 SMOKER_CHOICES = [('yes', 'Yes'), ('no', 'No')]
 REGION_CHOICES = [
-    ('southwest', 'Southwest'),
-    ('southeast', 'Southeast'),
-    ('northwest', 'Northwest'),
-    ('northeast', 'Northeast'),
+    ('north', 'North India'),
+    ('south', 'South India'),
+    ('east', 'East India'),
+    ('west', 'West India'),
 ]
 
 class PredictionForm(forms.Form):
