@@ -1,10 +1,22 @@
 {% extends 'predictor/base.html' %}
 
 {% block content %}
+<div class="row justify-content-center align-items-center mb-5">
+    <div class="col-lg-8 text-center">
+        <span class="badge bg-white text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-3 shadow-sm">
+            🚀 AI-Powered Precision
+        </span>
+        <h1 class="display-4 fw-bold mb-3">Smart Health Insurance Estimates</h1>
+        <p class="lead text-muted mb-4 opacity-75" style="max-width: 600px; margin: 0 auto;">
+            Get instant, accurate medical cost predictions tailored to your health profile.
+            No sign-up required.
+        </p>
+    </div>
+</div>
+
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card p-4">
-            <h2 class="text-center mb-4 text-primary">Medical Cost Estimator (India)</h2>
+    <div class="col-md-9 col-lg-7">
+        <div class="card p-4 p-md-5">
 
             <form method="post" class="needs-validation" novalidate>
                 {% csrf_token %}
