@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import PredictionForm
-from .utils import load_model
+from .utils import load_model, USD_TO_INR
 import pandas as pd
 
 def predict(request):
@@ -23,13 +23,16 @@ def predict(request):
             # Smoker: yes=1, no=0
             smoker_val = 1 if smoker == 'yes' else 0
             
-            # Region: One-hot encoding manual mapping
-            # Columns: age, sex, bmi, children, smoker, region_northwest, region_southeast, region_southwest
-            region_northwest = 1 if region == 'northwest' else 0
-            region_southeast = 1 if region == 'southeast' else 0
-            region_southwest = 1 if region == 'southwest' else 0
-            # northeast is 0, 0, 0 (reference category)
-
+            # Region: Map Indian regions to US regions (Model expected inputs)
+            # North India -> Northwest
+            # South India -> Southeast
+            # West India -> Southwest
+            # East India -> Northeast (Reference category: 0, 0, 0)
+            
+            region_northwest = 1 if region == 'north' else 0
+            region_southeast = 1 if region == 'south' else 0
+            region_southwest = 1 if region == 'west' else 0
+            
             # Create DataFrame for prediction
             input_data = pd.DataFrame([{
                 'age': age,
@@ -40,13 +43,18 @@ def predict(request):
                 'region_northwest': region_northwest,
                 'region_southeast': region_southeast,
                 'region_southwest': region_southwest
-            }]) # Notes: columns must match training order. 'region_northeast' is implied by all 0s.
+            }]) 
 
             # Load model
             try:
                 model = load_model()
-                prediction = model.predict(input_data)[0]
-                result = round(prediction, 2)
+                prediction_usd = model.predict(input_data)[0]
+                
+                # Convert to INR
+                prediction_inr = prediction_usd * USD_TO_INR
+                
+                # Format: Round to 2 decimals
+                result = f"{prediction_inr:,.2f}" 
             except Exception as e:
                 result = f"Error: {str(e)}"
     else:
