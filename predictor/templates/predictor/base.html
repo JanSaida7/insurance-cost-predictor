@@ -4,102 +4,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Cost Prediction</title>
+    <title>HealthSure | AI Cost Estimator</title>
+    <!-- Google Fonts: Outfit (Headings) & Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         :root {
-            --bs-primary: #FF9933;
-            /* Indian Saffron */
-            --bs-primary-rgb: 255, 153, 51;
+            /* Brand Colors */
+            --primary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            /* Warm Coral Gradient */
+            --bs-primary: #FF6B6B;
+            --bs-primary-rgb: 255, 107, 107;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
 
         body {
-            background-color: #fff5e6;
-            /* Light warm background */
-            border-top: 5px solid #138808;
-            /* India Green top border */
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(255, 107, 107, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 142, 83, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-dark);
         }
 
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .display-6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Glassmorphism Card */
         .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-top: 3px solid #FF9933;
-            /* Saffron card top */
+            border: var(--glass-border);
+            border-radius: 24px;
+            background: var(--glass-bg);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-top: none;
+            /* Reset old border */
         }
 
+        /* Buttons */
         .btn-primary {
-            background-color: #FF9933;
-            border-color: #FF9933;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .btn-primary:hover {
-            background-color: #d17a00;
-            border-color: #d17a00;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(255, 107, 107, 0.5);
+            background: var(--primary-gradient);
+            /* Keep gradient on hover */
         }
 
         .text-primary {
-            color: #d17a00 !important;
-            /* Slightly darker for text readability */
+            color: #FF6B6B !important;
         }
 
-        /* Plan Tiers */
+        /* Plan Tiers Override */
         .border-silver {
-            border-color: #C0C0C0 !important;
+            border-color: #e2e8f0 !important;
         }
 
         .bg-silver {
-            background: linear-gradient(135deg, #E0E0E0 0%, #C0C0C0 100%) !important;
-            color: #333 !important;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+            color: #334155 !important;
         }
 
         .btn-outline-silver {
-            color: #666;
-            border-color: #C0C0C0;
-        }
-
-        .btn-outline-silver:hover {
-            background-color: #C0C0C0;
-            color: #fff;
+            color: #64748b;
+            border-color: #cbd5e1;
+            border-radius: 10px;
         }
 
         .border-gold {
-            border-color: #FFD700 !important;
+            border-color: #fcd34d !important;
         }
 
         .bg-gold {
-            background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%) !important;
-            color: #333 !important;
+            background: linear-gradient(135deg, #fffbeb 0%, #fcd34d 100%) !important;
+            color: #78350f !important;
         }
 
         .btn-outline-gold {
-            color: #996515;
-            border-color: #FFD700;
-        }
-
-        .btn-outline-gold:hover {
-            background-color: #FFD700;
-            color: #fff;
+            color: #b45309;
+            border-color: #fcd34d;
+            border-radius: 10px;
         }
 
         .border-platinum {
-            border-color: #E5E4E2 !important;
+            border-color: #0f172a !important;
         }
 
         .bg-platinum {
-            background: linear-gradient(135deg, #E5E4E2 0%, #5d5d5d 100%) !important;
+            background: linear-gradient(135deg, #f8fafc 0%, #0f172a 100%) !important;
             color: #fff !important;
         }
 
         .btn-outline-platinum {
-            color: #5d5d5d;
-            border-color: #5d5d5d;
+            color: #334155;
+            border-color: #334155;
+            border-radius: 10px;
         }
 
-        .btn-outline-platinum:hover {
-            background-color: #5d5d5d;
-            color: #fff;
+        /* Inputs */
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+            border-color: #FF6B6B;
         }
     </style>
 </head>
