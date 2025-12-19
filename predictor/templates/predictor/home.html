@@ -6,24 +6,75 @@
         <div class="card p-4">
             <h2 class="text-center mb-4 text-primary">Medical Cost Estimator (India)</h2>
 
-            <form method="post" class="needs-validation">
+            <form method="post" class="needs-validation" novalidate>
                 {% csrf_token %}
 
-                {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                    <div class="text-danger small">
-                        {{ field.errors.as_text }}
+                <div class="row g-4">
+                    <!-- Age Slider -->
+                    <div class="col-md-6">
+                        <label for="id_age" class="form-label fw-bold small text-uppercase text-muted">Age: <span
+                                id="age_val" class="text-primary">30</span></label>
+                        <input type="range" class="form-range" min="18" max="100" step="1" id="id_age" name="age"
+                            value="{{ form.age.value|default:30 }}"
+                            oninput="document.getElementById('age_val').innerText = this.value">
                     </div>
-                    {% endif %}
-                </div>
-                {% endfor %}
 
-                <div class="d-grid gap-2 d-md-block mt-4 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5">Predict Cost</button>
-                    <a href="{% url 'predictor:predict' %}" class="btn btn-outline-secondary btn-lg px-4">Reset</a>
+                    <!-- BMI Slider -->
+                    <div class="col-md-6">
+                        <label for="id_bmi" class="form-label fw-bold small text-uppercase text-muted">BMI: <span
+                                id="bmi_val" class="text-primary">25.0</span></label>
+                        <input type="range" class="form-range" min="10" max="50" step="0.1" id="id_bmi" name="bmi"
+                            value="{{ form.bmi.value|default:25.0 }}"
+                            oninput="document.getElementById('bmi_val').innerText = this.value">
+                    </div>
+
+                    <!-- Sex Toggle -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase text-muted d-block">Sex</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="sex" id="male" value="male" {% if
+                                form.sex.value=='male' or not form.sex.value %}checked{% endif %}>
+                            <label class="btn btn-outline-primary" for="male">Male</label>
+
+                            <input type="radio" class="btn-check" name="sex" id="female" value="female" {% if
+                                form.sex.value=='female' %}checked{% endif %}>
+                            <label class="btn btn-outline-primary" for="female">Female</label>
+                        </div>
+                    </div>
+
+                    <!-- Smoker Toggle -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-uppercase text-muted d-block">Smoker</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="smoker" id="smoke_yes" value="yes" {% if
+                                form.smoker.value=='yes' %}checked{% endif %}>
+                            <label class="btn btn-outline-danger" for="smoke_yes">Yes</label>
+
+                            <input type="radio" class="btn-check" name="smoker" id="smoke_no" value="no" {% if
+                                form.smoker.value=='no' or not form.smoker.value %}checked{% endif %}>
+                            <label class="btn btn-outline-success" for="smoke_no">No</label>
+                        </div>
+                    </div>
+
+                    <!-- Floating Label Inputs -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form.children }}
+                            <label for="id_children">Children</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            {{ form.region }}
+                            <label for="id_region">Region</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-block mt-5 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg">Predict Cost</button>
+                    <a href="{% url 'predictor:predict' %}" class="btn btn-light btn-lg px-4 text-muted">Reset</a>
                 </div>
             </form>
 
