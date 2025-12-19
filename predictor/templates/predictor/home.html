@@ -1,207 +1,81 @@
 {% extends 'predictor/base.html' %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center mb-5">
-    <div class="col-lg-8 text-center">
-        <span class="badge bg-white text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-3 shadow-sm">
-            🚀 AI-Powered Precision
-        </span>
-        <h1 class="display-4 fw-bold mb-3">Smart Health Insurance Estimates</h1>
-        <p class="lead text-muted mb-4 opacity-75" style="max-width: 600px; margin: 0 auto;">
-            Get instant, accurate medical cost predictions tailored to your health profile.
-            No sign-up required.
-        </p>
-    </div>
-</div>
-
 <div class="row justify-content-center">
-    <div class="col-md-9 col-lg-7">
-        <div class="card p-4 p-md-5">
-
-            <form method="post" class="needs-validation" novalidate>
-                {% csrf_token %}
-
-                <div class="row g-4">
-                    <!-- Age Slider -->
-                    <div class="col-md-6">
-                        <label for="id_age" class="form-label fw-bold small text-uppercase text-muted">Age: <span
-                                id="age_val" class="text-primary">30</span></label>
-                        <input type="range" class="form-range" min="18" max="100" step="1" id="id_age" name="age"
-                            value="{{ form.age.value|default:30 }}"
-                            oninput="document.getElementById('age_val').innerText = this.value">
-                    </div>
-
-                    <!-- BMI Slider -->
-                    <div class="col-md-6">
-                        <label for="id_bmi" class="form-label fw-bold small text-uppercase text-muted">BMI: <span
-                                id="bmi_val" class="text-primary">25.0</span></label>
-                        <input type="range" class="form-range" min="10" max="50" step="0.1" id="id_bmi" name="bmi"
-                            value="{{ form.bmi.value|default:25.0 }}"
-                            oninput="document.getElementById('bmi_val').innerText = this.value">
-                    </div>
-
-                    <!-- Sex Toggle -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-uppercase text-muted d-block">Sex</label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="sex" id="male" value="male" {% if
-                                form.sex.value=='male' or not form.sex.value %}checked{% endif %}>
-                            <label class="btn btn-outline-primary" for="male">Male</label>
-
-                            <input type="radio" class="btn-check" name="sex" id="female" value="female" {% if
-                                form.sex.value=='female' %}checked{% endif %}>
-                            <label class="btn btn-outline-primary" for="female">Female</label>
-                        </div>
-                    </div>
-
-                    <!-- Smoker Toggle -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold small text-uppercase text-muted d-block">Smoker</label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="smoker" id="smoke_yes" value="yes" {% if
-                                form.smoker.value=='yes' %}checked{% endif %}>
-                            <label class="btn btn-outline-danger" for="smoke_yes">Yes</label>
-
-                            <input type="radio" class="btn-check" name="smoker" id="smoke_no" value="no" {% if
-                                form.smoker.value=='no' or not form.smoker.value %}checked{% endif %}>
-                            <label class="btn btn-outline-success" for="smoke_no">No</label>
-                        </div>
-                    </div>
-
-                    <!-- Floating Label Inputs -->
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            {{ form.children }}
-                            <label for="id_children">Children</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            {{ form.region }}
-                            <label for="id_region">Region</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid gap-2 d-md-block mt-5 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg"
-                        onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-2\'></span>Calculating...'">Predict
-                        Cost</button>
-                    <a href="{% url 'predictor:predict' %}" class="btn btn-light btn-lg px-4 text-muted">Reset</a>
-                </div>
-            </form>
-
-
-            {% if result %}
-            <div class="row g-4 mt-2 fade-in-up">
-                <!-- Result Card -->
-                <div class="col-md-5">
-                    <div class="card h-100 border-primary bg-primary-subtle text-center p-4">
-                        <h4 class="text-primary fw-bold">Estimated Cost</h4>
-                        <p class="display-6 fw-bold mb-1">₹{{ result }}</p>
-                        <p class="text-muted small">Annual Premium Estimate</p>
-                    </div>
-                </div>
-
-                <!-- Analysis Chart -->
-                <div class="col-md-7">
-                    <div class="card h-100 p-3">
-                        <h6 class="fw-bold text-muted mb-3">Cost Analysis</h6>
-                        <canvas id="costChart" height="150"></canvas>
-                    </div>
-                </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Enter Health Details</h4>
             </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const ctx = document.getElementById('costChart');
-                    const userCost = {{ result_raw }
-                };
-
-                // Simple logic for "National Average" based on a generic baseline
-                // In a real app, this would come from the backend based on age/demographics
-                const nationalAvg = 250000; // Mock average
-                const safeScenario = userCost * 0.8; // Mock safe scenario
-
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Your Estimate', 'National Average', 'Healthy Benchmark'],
-                        datasets: [{
-                            label: 'Annual Cost (₹)',
-                            data: [userCost, nationalAvg, safeScenario],
-                            backgroundColor: [
-                                'rgba(255, 107, 107, 0.8)', // Your Estimate (Primary)
-                                'rgba(203, 213, 225, 0.8)', // National Avg (Gray)
-                                'rgba(16, 185, 129, 0.8)'   // Healthy (Green)
-                            ],
-                            borderRadius: 8,
-                            borderSkipped: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { display: false }
-                            },
-                            x: {
-                                grid: { display: false }
-                            }
-                        },
-                        animation: {
-                            duration: 1500,
-                            easing: 'easeOutQuart'
-                        }
-                    }
-                });
-                });
-            </script>
-            {% endif %}
-
-            {% if plans %}
-            <div class="mt-5 fade-in-up delay-200">
-                <h4 class="mb-3 text-center">Recommended Plans for You</h4>
-                <div class="row g-3">
-                    {% for plan in plans %}
-                    <div class="col-md-4">
-                        <div class="card h-100 border-{{ plan.color }}">
-                            <div class="card-header bg-{{ plan.color }} text-white text-center">
-                                <h6 class="mb-0">{{ plan.tier|title }}</h6>
-                            </div>
-                            <div class="card-body text-center d-flex flex-column">
-                                <span class="badge bg-light text-dark mb-2 align-self-center border">{{ plan.badge
-                                    }}</span>
-                                <h5 class="card-title text-primary">{{ plan.provider }}</h5>
-                                <p class="card-text small text-muted">{{ plan.name }}</p>
-                                <h4 class="my-3">{{ plan.premium }}<small class="text-muted fs-6">/yr</small></h4>
-                                <hr>
-                                <ul class="list-unstyled text-start small mb-4 flex-grow-1">
-                                    {% for feature in plan.features %}
-                                    <li class="mb-1">
-                                        <span class="text-success me-1">✔</span> {{ feature }}
-                                    </li>
-                                    {% endfor %}
-                                    <li class="mb-1 text-muted">
-                                        <span class="text-secondary me-1">ℹ</span> Cover: {{ plan.cover_amount }}
-                                    </li>
-                                </ul>
-                                <a href="#" class="btn btn-outline-{{ plan.color }} btn-sm mt-auto">View Details</a>
-                            </div>
-                        </div>
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     {% endfor %}
-                </div>
-            </div>
-            {% endif %}
 
-            {% endif %}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Predict Cost</button>
+                    </div>
+                </form>
+
+                {% if result %}
+                <div class="alert alert-success mt-4 text-center">
+                    <h4 class="alert-heading">Estimated Cost</h4>
+                    <p class="display-6 fw-bold">₹{{ result }}</p>
+                    <hr>
+                    <p class="mb-0">This is an AI-generated estimate based on the provided details.</p>
+                </div>
+                {% endif %}
+
+                {% if plans %}
+                <div class="mt-4">
+                    <h5 class="mb-3">Recommended Plans</h5>
+                    <div class="row g-3">
+                        {% for plan in plans %}
+                        <div class="col-md-4">
+                            <div class="card h-100 border-{{ plan.color }}">
+                                <div class="card-header bg-{{ plan.color }} text-white text-center">
+                                    {{ plan.tier|title }} Plan
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-primary">{{ plan.provider }}</h5>
+                                    <p class="card-text">{{ plan.name }}</p>
+                                    <h3>{{ plan.premium }}<small class="text-muted fs-6">/yr</small></h3>
+                                    <p class="small text-muted">Cover: {{ plan.cover_amount }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Add some spacing for Bootstrap form controls generated by Django -->
+<script>
+    // Simple script to add bootstrap classes to vanilla Django inputs if they don't have them
+    document.querySelectorAll('input, select').forEach(el => {
+        if (!el.classList.contains('form-control') && !el.classList.contains('form-select') && !el.type.includes('radio') && !el.type.includes('checkbox')) {
+            el.classList.add('form-control');
+        }
+        if (el.tagName === 'SELECT') {
+            el.classList.add('form-select');
+        }
+    });
+</script>
 {% endblock %}
