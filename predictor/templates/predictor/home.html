@@ -85,14 +85,16 @@
                 </div>
 
                 <div class="d-grid gap-2 d-md-block mt-5 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg">Predict Cost</button>
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg"
+                        onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-2\'></span>Calculating...'">Predict
+                        Cost</button>
                     <a href="{% url 'predictor:predict' %}" class="btn btn-light btn-lg px-4 text-muted">Reset</a>
                 </div>
             </form>
 
 
             {% if result %}
-            <div class="row g-4 mt-2">
+            <div class="row g-4 mt-2 fade-in-up">
                 <!-- Result Card -->
                 <div class="col-md-5">
                     <div class="card h-100 border-primary bg-primary-subtle text-center p-4">
@@ -151,6 +153,10 @@
                             x: {
                                 grid: { display: false }
                             }
+                        },
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
                         }
                     }
                 });
@@ -159,7 +165,7 @@
             {% endif %}
 
             {% if plans %}
-            <div class="mt-5">
+            <div class="mt-5 fade-in-up delay-200">
                 <h4 class="mb-3 text-center">Recommended Plans for You</h4>
                 <div class="row g-3">
                     {% for plan in plans %}
