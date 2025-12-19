@@ -31,7 +31,45 @@
             <div class="alert alert-success mt-4 text-center" role="alert">
                 <h4 class="alert-heading">Estimated Cost</h4>
                 <p class="display-6 fw-bold">₹{{ result }}</p>
+                <p class="mb-0 text-muted small">Based on your health profile</p>
             </div>
+
+            {% if plans %}
+            <div class="mt-5">
+                <h4 class="mb-3 text-center">Recommended Plans for You</h4>
+                <div class="row g-3">
+                    {% for plan in plans %}
+                    <div class="col-md-4">
+                        <div class="card h-100 border-{{ plan.color }}">
+                            <div class="card-header bg-{{ plan.color }} text-white text-center">
+                                <h6 class="mb-0">{{ plan.tier|title }}</h6>
+                            </div>
+                            <div class="card-body text-center d-flex flex-column">
+                                <span class="badge bg-light text-dark mb-2 align-self-center border">{{ plan.badge
+                                    }}</span>
+                                <h5 class="card-title text-primary">{{ plan.provider }}</h5>
+                                <p class="card-text small text-muted">{{ plan.name }}</p>
+                                <h4 class="my-3">{{ plan.premium }}<small class="text-muted fs-6">/yr</small></h4>
+                                <hr>
+                                <ul class="list-unstyled text-start small mb-4 flex-grow-1">
+                                    {% for feature in plan.features %}
+                                    <li class="mb-1">
+                                        <span class="text-success me-1">✔</span> {{ feature }}
+                                    </li>
+                                    {% endfor %}
+                                    <li class="mb-1 text-muted">
+                                        <span class="text-secondary me-1">ℹ</span> Cover: {{ plan.cover_amount }}
+                                    </li>
+                                </ul>
+                                <a href="#" class="btn btn-outline-{{ plan.color }} btn-sm mt-auto">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             {% endif %}
         </div>
     </div>

@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from .forms import PredictionForm
 from .utils import load_model, USD_TO_INR
+from .plans import get_recommended_plans
 import pandas as pd
 
 def predict(request):
     result = None
+    plans = None
     if request.method == 'POST':
         form = PredictionForm(request.POST)
         if form.is_valid():
@@ -44,7 +46,7 @@ def predict(request):
                 'region_southeast': region_southeast,
                 'region_southwest': region_southwest
             }]) 
-
+            
             # Load model
             try:
                 model = load_model()
@@ -55,9 +57,12 @@ def predict(request):
                 
                 # Format: Round to 2 decimals
                 result = f"{prediction_inr:,.2f}" 
+                
+                # Get Recommendations
+                plans = get_recommended_plans(prediction_inr)
             except Exception as e:
                 result = f"Error: {str(e)}"
     else:
         form = PredictionForm()
 
-    return render(request, 'predictor/home.html', {'form': form, 'result': result})
+    return render(request, 'predictor/home.html', {'form': form, 'result': result, 'plans': plans})
