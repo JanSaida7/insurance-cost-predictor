@@ -90,12 +90,73 @@
                 </div>
             </form>
 
+
             {% if result %}
-            <div class="alert alert-success mt-4 text-center" role="alert">
-                <h4 class="alert-heading">Estimated Cost</h4>
-                <p class="display-6 fw-bold">₹{{ result }}</p>
-                <p class="mb-0 text-muted small">Based on your health profile</p>
+            <div class="row g-4 mt-2">
+                <!-- Result Card -->
+                <div class="col-md-5">
+                    <div class="card h-100 border-primary bg-primary-subtle text-center p-4">
+                        <h4 class="text-primary fw-bold">Estimated Cost</h4>
+                        <p class="display-6 fw-bold mb-1">₹{{ result }}</p>
+                        <p class="text-muted small">Annual Premium Estimate</p>
+                    </div>
+                </div>
+
+                <!-- Analysis Chart -->
+                <div class="col-md-7">
+                    <div class="card h-100 p-3">
+                        <h6 class="fw-bold text-muted mb-3">Cost Analysis</h6>
+                        <canvas id="costChart" height="150"></canvas>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const ctx = document.getElementById('costChart');
+                    const userCost = {{ result_raw }
+                };
+
+                // Simple logic for "National Average" based on a generic baseline
+                // In a real app, this would come from the backend based on age/demographics
+                const nationalAvg = 250000; // Mock average
+                const safeScenario = userCost * 0.8; // Mock safe scenario
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Your Estimate', 'National Average', 'Healthy Benchmark'],
+                        datasets: [{
+                            label: 'Annual Cost (₹)',
+                            data: [userCost, nationalAvg, safeScenario],
+                            backgroundColor: [
+                                'rgba(255, 107, 107, 0.8)', // Your Estimate (Primary)
+                                'rgba(203, 213, 225, 0.8)', // National Avg (Gray)
+                                'rgba(16, 185, 129, 0.8)'   // Healthy (Green)
+                            ],
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { display: false }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                });
+            </script>
+            {% endif %}
 
             {% if plans %}
             <div class="mt-5">

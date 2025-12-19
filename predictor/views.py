@@ -65,4 +65,4 @@ def predict(request):
     else:
         form = PredictionForm()
 
-    return render(request, 'predictor/home.html', {'form': form, 'result': result, 'plans': plans})
+    return render(request, 'predictor/home.html', {'form': form, 'result': result, 'result_raw': int(prediction_inr) if result else 0, 'plans': plans})
